@@ -1,5 +1,8 @@
 const puppy = require('puppeteer')
 
+let moderators = ["maiya_o","KingGeneral","sp24174871","praveenthedev ","mithumhetre0001","qkrrbtjd90","davidmcgowan001","fsfsdf5","yashpalsinghdeo1"];
+
+
 async function openBrowser(){
     const browser = await puppy.launch({
         headless : false,
@@ -57,50 +60,62 @@ async function openBrowser(){
    let manageChallengesTab = administrationTabs[1]
    await manageChallengesTab.click()
 
+   
+   
    await tab.waitForSelector(".btn.btn-green.backbone.pull-right")
    let createChallengeButton = await tab.$(".btn.btn-green.backbone.pull-right")
    await createChallengeButton.click()
+   let createChallengeUrl = await tab.evaluate(function(ele){
+       return ele.getAttribute("href");
+    },createChallengeButton);
+    
+    
+    for(let i=0;i<10;i++){
+       await tab.goto("https://hackerrank.com"+createChallengeUrl)
+       await tab.waitForSelector("#input_format-container .CodeMirror-code");
+       let challengeNameInput = await tab.$("#name")
+       await challengeNameInput.type(`challenge ${i+1}`)
+       let challengeDescInput = await tab.$("#preview")
+       await challengeDescInput.type("hard question")
+    
+       //can not use directly type into div ( or other html tags which are not made for input) use click first then type
+       
+    //    await tab.evaluate( () => {
+    //        window.scrollBy(0, window.innerHeight);
+    //     })
+        let codeTextAreas = await tab.$$(".CodeMirror-code");
+    
+       for(let i in codeTextAreas){
+          await codeTextAreas[i].click()
+           await codeTextAreas[i].type("sljcksndc")
+       }
+    
+       await tab.waitForSelector("#tags_tag")
+       let tagsInputTab = await tab.$("#tags_tag")
+       await tagsInputTab.click();
+       await tagsInputTab.type("hi")   
+       await tab.keyboard.press("Enter")
+    
+       let saveChangesButton = await tab.$(".save-challenge.btn.btn-green")
+       await saveChangesButton.click() 
+    
+       await tab.waitForSelector("[data-tab='moderators']")
+       let moderatorsButton =await tab.$('[data-tab="moderators"]')
+       await moderatorsButton.click()
+    
+    
+       await tab.waitForSelector("#moderator")
+       moderatorsInputTab = await tab.$("#moderator")
 
+       for(let j in moderators){
+           await moderatorsInputTab.type(moderators[j])
+           await tab.keyboard.press("Enter")
+       }
+    
+       saveChangesButton = await tab.$(".save-challenge.btn.btn-green")
+       await saveChangesButton.click()
 
-   await tab.waitForSelector("#input_format-container .CodeMirror-code");
-   let challengeNameInput = await tab.$("#name")
-   await challengeNameInput.type("gajnkcsm")
-   let challengeDescInput = await tab.$("#preview")
-   await challengeDescInput.type("hard question")
-
-   //can not use directly type into div ( or other html tags which are not made for input) use click first then type
-   
-//    await tab.evaluate( () => {
-//        window.scrollBy(0, window.innerHeight);
-//     })
-    let codeTextAreas = await tab.$$(".CodeMirror-code");
-
-   for(let i in codeTextAreas){
-      await codeTextAreas[i].click()
-       await codeTextAreas[i].type("sljcksndc")
-   }
-
-   await tab.waitForSelector("#tags_tag")
-   let tagsInputTab = await tab.$("#tags_tag")
-   await tagsInputTab.click();
-   await tagsInputTab.type("hi")   
-   await tab.keyboard.press("Enter")
-
-   let saveChangesButton = await tab.$(".save-challenge.btn.btn-green")
-   await saveChangesButton.click() 
-
-   await tab.waitForSelector("[data-tab='moderators']")
-   let moderatorsButton =await tab.$('[data-tab="moderators"]')
-   await moderatorsButton.click()
-
-   
-   await tab.waitForSelector("#moderator")
-   moderatorsInputTab = await tab.$("#moderator")
-   await moderatorsInputTab.type("ajkKALSM")
-   await tab.keyboard.press("Enter")
-
-   saveChangesButton = await tab.$(".save-challenge.btn.btn-green")
-   await saveChangesButton.click()
+  }
 
 }
 
